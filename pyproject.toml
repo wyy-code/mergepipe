@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mergepipe"
+version = "0.1.0"
+description = "MergePipe: budget-aware checkpoint merging with manifest+lineage"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy",
+  "typer>=0.9",
+  "rich>=13",
+  "safetensors",
+]
+
+[project.scripts]
+mergepipe = "mergepipe.cli.app:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["mergepipe*"]

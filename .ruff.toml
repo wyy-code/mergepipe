@@ -1,0 +1,25 @@
+# .ruff.toml —— 独立 Ruff 配置文件（不要使用 [tool.ruff]）
+
+line-length = 100
+target-version = "py310"
+
+# 排除第三方/上游代码
+exclude = [
+  "model_hub/*",
+]
+
+[lint]
+# 选择的规则集
+select = ["E", "F", "W", "I", "UP", "B"]
+# 忽略的规则（E501 行宽交给 black）
+ignore = ["E501"]
+
+[format]
+quote-style = "preserve"
+indent-style = "space"
+skip-magic-trailing-comma = false
+
+[lint.isort]
+known-first-party = ["mergepipe", "catalog", "analyzer", "planner", "engine", "storage", "cli"]
+combine-as-imports = true
+force-wrap-aliases = true
