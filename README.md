@@ -132,6 +132,84 @@ Empirically (see paper experiments):
 - 🔁 Deterministic, repeatable merges
 - 🧾 Full explainability via manifests
 
+## 📊 Experimental Results
+
+### Expert I/O, Wall Time, and Scaling Behavior
+
+The following figure compares MergePipe with a naive merge pipeline
+across multiple model families and expert counts.
+
+![Expert I/O and Wall Time Scaling](./assets/fig7_vldb_all_doublecol.png)
+
+**Key observations:**
+- Naive merging exhibits linear growth in expert I/O and wall time.
+- MergePipe keeps expert I/O nearly flat under a fixed budget.
+- Speedups grow with model size and number of experts.
+
+
+### System Architecture
+
+For a detailed end-to-end architecture of MergePipe,
+including Catalog, Planner, Engine, Transaction Manager,
+and Explain Views, see the full system overview:
+
+📄 ![MergePipe System Architecture (PDF)](./assets/overview_mergedb-Overall.drawio.png)
+
+The architecture illustrates:
+- block-level catalog construction
+- conflict-aware, budget-constrained planning
+- ΔW streaming execution
+- atomic snapshot publication
+- explainability hooks linked to plans and merges
+
+
+
+## 🏭 Industrial Use Case: Continuous Expert Integration
+
+### Scenario
+A large organization maintains multiple domain-specific LLM experts:
+- general instruction model
+- code expert
+- math expert
+- reasoning expert
+- domain adapters (finance, biomedical, etc.)
+
+New experts or updated checkpoints arrive **daily or weekly**.
+The organization needs to continuously merge them into deployable models.
+
+### Challenges Without MergePipe
+- Every merge scans *all* experts (O(K) expert reads)
+- Merge cost grows linearly with expert count
+- No cost predictability → unstable pipelines
+- No explainability → hard to debug regressions
+- No lineage → merges are not auditable
+
+### MergePipe in Production
+MergePipe turns merging into a **budgeted, repeatable pipeline**:
+
+1. **Planning**
+   - Each merge request specifies an expert I/O budget (e.g., 8GB)
+   - Planner selects only high-impact parameter blocks
+   - Plan digest π is generated and stored
+
+2. **Execution**
+   - Engine streams only selected blocks
+   - Merge operators (TIES / DARE / AVG) are applied unchanged
+   - Snapshot is materialized atomically
+
+3. **Auditing**
+   - Manifest records touched blocks, experts, and realized cost
+   - Regressions can be traced to specific experts or tensors
+
+### Practical Benefits
+- 🔻 Order-of-magnitude reduction in expert I/O
+- 🚀 Faster iteration on expert integration
+- 📊 Predictable wall-time under shared cluster resources
+- 🧾 Full audit trail for compliance and debugging
+
+MergePipe enables **continuous expert integration** without turning
+model merging into a scalability bottleneck.
+
 
 ## 🚀 Quick Start
 
@@ -274,83 +352,7 @@ and reproducibility independently.
 
 --- -->
 
-## 📊 Experimental Results
 
-### Expert I/O, Wall Time, and Scaling Behavior
-
-The following figure compares MergePipe with a naive merge pipeline
-across multiple model families and expert counts.
-
-![Expert I/O and Wall Time Scaling](./assets/fig7_vldb_all_doublecol.png)
-
-**Key observations:**
-- Naive merging exhibits linear growth in expert I/O and wall time.
-- MergePipe keeps expert I/O nearly flat under a fixed budget.
-- Speedups grow with model size and number of experts.
-
-
-### System Architecture
-
-For a detailed end-to-end architecture of MergePipe,
-including Catalog, Planner, Engine, Transaction Manager,
-and Explain Views, see the full system overview:
-
-📄 ![MergePipe System Architecture (PDF)](./assets/overview_mergedb-Overall.drawio.png)
-
-The architecture illustrates:
-- block-level catalog construction
-- conflict-aware, budget-constrained planning
-- ΔW streaming execution
-- atomic snapshot publication
-- explainability hooks linked to plans and merges
-
-
-
-## 🏭 Industrial Use Case: Continuous Expert Integration
-
-### Scenario
-A large organization maintains multiple domain-specific LLM experts:
-- general instruction model
-- code expert
-- math expert
-- reasoning expert
-- domain adapters (finance, biomedical, etc.)
-
-New experts or updated checkpoints arrive **daily or weekly**.
-The organization needs to continuously merge them into deployable models.
-
-### Challenges Without MergePipe
-- Every merge scans *all* experts (O(K) expert reads)
-- Merge cost grows linearly with expert count
-- No cost predictability → unstable pipelines
-- No explainability → hard to debug regressions
-- No lineage → merges are not auditable
-
-### MergePipe in Production
-MergePipe turns merging into a **budgeted, repeatable pipeline**:
-
-1. **Planning**
-   - Each merge request specifies an expert I/O budget (e.g., 8GB)
-   - Planner selects only high-impact parameter blocks
-   - Plan digest π is generated and stored
-
-2. **Execution**
-   - Engine streams only selected blocks
-   - Merge operators (TIES / DARE / AVG) are applied unchanged
-   - Snapshot is materialized atomically
-
-3. **Auditing**
-   - Manifest records touched blocks, experts, and realized cost
-   - Regressions can be traced to specific experts or tensors
-
-### Practical Benefits
-- 🔻 Order-of-magnitude reduction in expert I/O
-- 🚀 Faster iteration on expert integration
-- 📊 Predictable wall-time under shared cluster resources
-- 🧾 Full audit trail for compliance and debugging
-
-MergePipe enables **continuous expert integration** without turning
-model merging into a scalability bottleneck.
 
 
 ## ✨ Closing Thought
