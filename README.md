@@ -360,7 +360,7 @@ and reproducibility independently.
 > MergePipe does not invent a new merge algorithm.
 > It makes *existing merging algorithms executable at scale*.
 
-If you care about **scalable, predictable, and auditable LLM merging**,
+<!-- If you care about **scalable, predictable, and auditable LLM merging**,
 MergePipe is the missing system layer.
 
-```
+``` -->
