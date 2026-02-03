@@ -291,42 +291,6 @@ print("Manifest hash:", manifest.manifest_hash)
 
 ## 📁 Repository Structure
 
-```
-mergepipe/
-├── catalog/        # Persistent metadata & block index
-├── planner/        # Budget- & conflict-aware planning
-├── engine/         # Streaming execution & DeltaIterator
-├── manifest/       # Lineage & explainability
-└── storage/        # I/O pipeline & staging
-```
-
-## 🔁 Reproducibility
-
-To reproduce a merge:
-
-1. Load the same **plan digest (π)**
-2. Execute with the same base & experts
-3. Verify `manifest_hash`
-
-No hidden state. No ambiguity.
-
-
-
-## 🤝 When Should You Use MergePipe?
-
-MergePipe is ideal when:
-
-* you merge **many experts**
-* checkpoints are **large**
-* disk I/O dominates runtime
-* reproducibility and auditability matter
-
-For very small K or dense merges, benefits naturally diminish.
-
-
-
-## 📁 Repository Structure
-
 MergePipe is organized to mirror the **Plan → Execute → Manifest** lifecycle.
 Each major module corresponds to a concrete system responsibility shown in the architecture diagram.
 
@@ -342,6 +306,15 @@ This structure directly reflects the MergePipe execution model:
 
 This separation allows MergePipe to reason about cost, correctness,
 and reproducibility independently.
+
+```
+mergepipe/
+├── catalog/        # Persistent metadata & block index
+├── planner/        # Budget- & conflict-aware planning
+├── engine/         # Streaming execution & DeltaIterator
+├── manifest/       # Lineage & explainability
+└── storage/        # I/O pipeline & staging
+```
 
 
 <!-- ## 📜 License & Artifact
