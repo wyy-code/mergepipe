@@ -236,9 +236,9 @@ mergepipe init-db --db /tmp/mergepipe.sqlite
 ### Rigster base and experts (only once)
 
 ```bash
-mergepipe register --db /tmp/mergepipe.sqlite --model-id base_qwen06b --uri /path/to/base --arch unknown --dtype unknown
-mergepipe register --db /tmp/mergepipe.sqlite --model-id exp1 --uri /path/to/expert1 --arch unknown --dtype unknown
-mergepipe register --db /tmp/mergepipe.sqlite --model-id exp2 --uri /path/to/expert2 --arch unknown --dtype unknown
+mergepipe register --db /tmp/mergepipe.sqlite --model-id base_qwen06b --uri /path/to/base
+mergepipe register --db /tmp/mergepipe.sqlite --model-id exp1 --uri /path/to/expert1
+mergepipe register --db /tmp/mergepipe.sqlite --model-id exp2 --uri /path/to/expert2
 ````
 
 ### Run a Merge
